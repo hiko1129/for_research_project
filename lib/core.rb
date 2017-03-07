@@ -6,6 +6,8 @@ require 'item'
 class CoreManager
   def fetch_jan_codes
     item_provider = ItemProvider.new
+    # FIXME
+    # 全てのファイルパスの記述
     yaml = YAML.load_file('../config/search.yml')
     yaml['query'].each do |query|
       item_provider.gets_jan(query)
