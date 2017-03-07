@@ -13,11 +13,7 @@ class ItemProvider
   # janコードを抽出していく処理
   def gets_jan(query)
     response_array = fetch_jan(query)
-    view = ItemView.new(response_array.size, 'JANコードの抽出')
-    response_array.each_with_index do |response, idx|
-      view.show_status(idx)
-      extract_jan(response, idx)
-    end
+    extract_jan(response_array, query)
   end
 
   private
@@ -34,7 +30,7 @@ class ItemProvider
   def fetch_jan(query)
     @item_search_params[:query] = query
     max_offset = 20
-    view = ItemView.new(max_offset, 'JANコードの取得')
+    view = ItemView.new(max_offset, query + 'のJANコードの取得')
     api_client = APIClient.new
     response_array = []
     max_offset.times do |i|
@@ -49,15 +45,19 @@ class ItemProvider
     response_array
   end
 
-  def extract_jan(response, idx)
-    jan_codes = { "#{idx}": [] }
-    response['ResultSet']['0']['Result'].each do |data|
-      if data[1].is_a?(Hash) && !data[1]['JanCode'].blank?
-        jan_code = data[1]['JanCode']
-        jan_codes[:"#{idx}"] << jan_code if compare_gs1(jan_code)
+  def extract_jan(response_array, query)
+    view = ItemView.new(response_array.size, query + 'のJANコードの抽出')
+    response_array.each_with_index do |response, idx|
+      view.show_status(idx + 1)
+      jan_codes = { "#{query}": [] }
+      response['ResultSet']['0']['Result'].each do |data|
+        if data[1].is_a?(Hash) && !data[1]['JanCode'].blank?
+          jan_code = data[1]['JanCode']
+          jan_codes[:"#{query}"] << jan_code if compare_gs1(jan_code)
+        end
       end
+      FileOutput.export(jan_codes)
     end
-    FileOutput.export(jan_codes)
   end
 
   def compare_gs1(jan_code)

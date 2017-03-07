@@ -13,10 +13,6 @@ class CoreManager
   end
 
   def fetch_review
-    puts Dir.pwd
-    unless File.exist?('../assets/reviews.db')
-
-    end
     # janコードファイルの初期化
     open('../assets/jan_codes.json', 'w') do |io|
       io = nil
@@ -30,8 +26,11 @@ class CoreManager
       jan_codes.each_value do |array|
         merged_jan_codes.concat(array)
       end
+      open('../assets/jan_codes.json', 'w') do |io2|
+        JSON.dump({ uniq: merged_jan_codes.uniq }, io2)
+      end
       review_provider = ReviewProvider.new
-      review_provider.provide(merged_jan_codes)
+      review_provider.provide(merged_jan_codes.uniq)
     end
   end
 end
