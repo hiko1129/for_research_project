@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-$LOAD_PATH << '.'
 require 'reviews'
 require 'item'
 
@@ -14,6 +13,10 @@ class CoreManager
   end
 
   def fetch_review
+    puts Dir.pwd
+    unless File.exist?('../assets/reviews.db')
+
+    end
     # janコードファイルの初期化
     open('../assets/jan_codes.json', 'w') do |io|
       io = nil

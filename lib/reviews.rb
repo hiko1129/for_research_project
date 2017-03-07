@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-$LOAD_PATH << '.'
 require 'module'
 require 'store'
 

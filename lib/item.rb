@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-$LOAD_PATH << '.'
 require 'module'
 
 # Categoryの処理を行う
@@ -64,7 +63,6 @@ class ItemProvider
   def compare_gs1(jan_code)
     yaml = YAML.load_file('../config/search.yml')
     yaml['gs1'].each do |gs1|
-      puts gs1, jan_code
       return true if jan_code =~ /^#{gs1}/
     end
   end
