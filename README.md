@@ -4,7 +4,8 @@
 Yahoo Shoppingからレビューを取得する。  
 * 特定の事業者が提供している商品のレビューのみを取得する。  
 * とりあえずレビューを取得してreviews.dbに保存することはできる状態。
-* 事前にYahoo JapanでアプリケーションIDを取得する必要がある。
+* 事前にYahoo JapanでアプリケーションIDを取得する必要がある。  
+
 ## Usage
 * bundle install
 * export APPLICATION_ID='YOUR_YAHOO_SHOPPING_APPLICATION_ID'をbash_profileなどに記述
