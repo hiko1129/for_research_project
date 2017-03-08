@@ -29,12 +29,12 @@ class ItemProvider
   # janコードを取得
   def fetch_jan(query)
     @item_search_params[:query] = query
-    max_offset = 20
+    max_offset = 950
     view = ItemView.new(max_offset, query + 'のJANコードの取得')
     api_client = APIClient.new
     response_array = []
-    max_offset.times do |i|
-      view.show_status(i + 1)
+    0.step(max_offset, 50) do |i|
+      view.show_status(i)
       @item_search_params[:offset] = i
     # カテゴリID取得のためのパラメータ付きリクエストURLを生成
       jan_search_request_url = api_client.create_url(@item_search_url,
@@ -49,21 +49,25 @@ class ItemProvider
     view = ItemView.new(response_array.size, query + 'のJANコードの抽出')
     response_array.each_with_index do |response, idx|
       view.show_status(idx + 1)
-      jan_codes = { "#{query}": [] }
+      jan_codes = { "#{query}" => [] }
       response['ResultSet']['0']['Result'].each do |data|
         if data[1].is_a?(Hash) && !data[1]['JanCode'].blank?
           jan_code = data[1]['JanCode']
-          jan_codes[:"#{query}"] << jan_code if compare_gs1(jan_code)
+          jan_codes["#{query}"] << jan_code if compare_gs1(jan_code)
         end
       end
-      FileOutput.export(jan_codes)
+      FileOutput.export(jan_codes, query)
     end
   end
 
   def compare_gs1(jan_code)
-    yaml = YAML.load_file('../config/search.yml')
+    yaml = YAML.load_file("#{Path::ROOT_DIR}/config/search.yml")
     yaml['gs1'].each do |gs1|
-      return true if jan_code =~ /^#{gs1}/
+      if jan_code =~ /^#{gs1}/
+        return true
+      else
+        return false
+      end
     end
   end
 end

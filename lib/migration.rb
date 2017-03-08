@@ -2,9 +2,10 @@
 require 'bundler/setup'
 require 'active_record'
 require 'yaml'
+require_relative 'module.rb'
 
 # database.yamlを読み込んで利用する
-config = YAML.load_file('../config/database.yml')
+config = YAML.load_file("#{Path::ROOT_DIR}/config/database.yml")
 ActiveRecord::Base.establish_connection(config['db']['development'])
 
 # スキーマを設定

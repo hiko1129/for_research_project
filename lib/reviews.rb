@@ -19,9 +19,13 @@ class ReviewProvider
     # 商品レビュー検索のためのパラメータ付きリクエストURLを生成
     jan_codes.each_with_index do |jan, index|
       review_search_params[:jan] = jan
-      reviews = fetch(api_client, review_search_url, review_search_params)
-      extract(reviews)
-      view.show_status(index + 1)
+      view.show_index(index + 1)
+      1.step(951, 50) do |i|
+        review_search_params[:start] = i
+        view.show_start(i)
+        reviews = fetch(api_client, review_search_url, review_search_params)
+        break unless extract(reviews)
+      end
     end
   end
 
@@ -35,6 +39,7 @@ class ReviewProvider
 
   def extract(reviews)
     return if reviews.nil?
+    return nil if reviews['ResultSet']['totalResultsAvailable'] == '0'
     reviews['ResultSet']['Result'].each do |review|
       next unless review.include?('Ratings')
       rate = review['Ratings']['Rate']
@@ -57,7 +62,12 @@ class ReviewView
     puts type
   end
 
-  def show_status(index)
-    puts "#{index}/#{@size}"
+  def show_index(index)
+    puts "index:#{index}/#{@size}"
   end
+
+  def show_start(start)
+    puts "start:#{start}"
+  end
+
 end

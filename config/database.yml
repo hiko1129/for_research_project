@@ -1,4 +1,4 @@
 db:
   development:
     adapter: 'sqlite3'
-    database: '../assets/reviews.db'
+    database: './assets/reviews.db'
